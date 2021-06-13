@@ -30,6 +30,24 @@ function App() {
     });
   };
 
+  // local storage save and get data
+  useEffect(() => {
+    if (transactions.length === 0 && balanceData.length === 1) {
+      const transactions = JSON.parse(localStorage.getItem("transactions"));
+      const balanceData = JSON.parse(localStorage.getItem("balanceData"));
+      setTransactions(transactions);
+      setBalanceData(balanceData);
+    }
+  }, [balanceData.length, transactions.length]);
+
+  useEffect(() => {
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+  }, [transactions]);
+
+  useEffect(() => {
+    localStorage.setItem("balanceData", JSON.stringify(balanceData));
+  }, [balanceData]);
+
   useEffect(() => {
     const amounts = transactions.map((transaction) => transaction.amount);
     const balanceData = [0];
@@ -64,7 +82,7 @@ function App() {
       style={{
         minHeight: "100vh",
       }}
-      className="w-full flex justify-center items-center py-8"
+      className="flex items-center justify-center w-full py-8"
     >
       <div
         style={{
@@ -73,22 +91,22 @@ function App() {
         className="flex flex-col"
       >
         <h1 className="text-3xl font-medium">Tracker</h1>
-        <h2 className="text-lg font-medium mt-6">Balance</h2>
+        <h2 className="mt-6 text-lg font-medium">Balance</h2>
         <Balance balanceData={balanceData} />
         <IncomeExpenseTable transactions={transactions} />
 
-        <div className="mt-8 flex flex-col space-y-4">
-          <h2 className="text-lg font-medium pb-1 border-b border-gray-300 ">
+        <div className="flex flex-col mt-8 space-y-4">
+          <h2 className="pb-1 text-lg font-medium border-b border-gray-300 ">
             Visualization
           </h2>
-          <div className="shadow border border-gray-200 px-4 py-2 rounded">
+          <div className="px-4 py-2 border border-gray-200 rounded shadow">
             <Line data={graphData} />
           </div>
         </div>
         <TransactionList transactions={transactions} />
 
-        <div className="mt-8 flex flex-col space-y-4">
-          <h2 className="text-lg font-medium pb-1 border-b border-gray-300 ">
+        <div className="flex flex-col mt-8 space-y-4">
+          <h2 className="pb-1 text-lg font-medium border-b border-gray-300 ">
             Add transaction
           </h2>
 
@@ -98,7 +116,7 @@ function App() {
               <input
                 {...register("item", { required: true })}
                 type="text"
-                className="w-full py-2 pl-3 pr-10 transition-colors border-2 border-gray-200 rounded hover:border-gray-300 focus:outline-none focus:border-indigo-500 mt-1"
+                className="w-full py-2 pl-3 pr-10 mt-1 transition-colors border-2 border-gray-200 rounded hover:border-gray-300 focus:outline-none focus:border-indigo-500"
               />
             </div>
             {errors.item && errors.item.type === "required" && (
@@ -111,7 +129,7 @@ function App() {
               <input
                 {...register("amount", { required: true })}
                 type="number"
-                className="w-full py-2 pl-3 pr-10 transition-colors border-2 border-gray-200 rounded hover:border-gray-300 focus:outline-none focus:border-indigo-500 mt-1"
+                className="w-full py-2 pl-3 pr-10 mt-1 transition-colors border-2 border-gray-200 rounded hover:border-gray-300 focus:outline-none focus:border-indigo-500"
               />
             </div>
             {errors.amount && errors.amount.type === "required" && (
@@ -119,7 +137,7 @@ function App() {
             )}
             <button
               type="submit"
-              className="mt-6 w-full py-2 font-bold text-center text-indigo-500 border-2 border-indigo-500 rounded cursor-pointer hover:bg-indigo-500 hover:text-gray-100 focus:outline-none"
+              className="w-full py-2 mt-6 font-bold text-center text-indigo-500 border-2 border-indigo-500 rounded cursor-pointer hover:bg-indigo-500 hover:text-gray-100 focus:outline-none"
             >
               Add transaction
             </button>
